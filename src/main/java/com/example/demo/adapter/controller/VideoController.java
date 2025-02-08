@@ -1,10 +1,12 @@
 package com.example.demo.adapter.controller;
 
 import com.example.demo.core.domain.Pessoa;
+import com.example.demo.core.domain.Video;
 import com.example.demo.infrastructure.repository.dynamo.PessoaRepository;
 import com.example.demo.core.usecase.SqsService;
 import com.example.demo.core.usecase.ZipUtilsService;
 import com.example.demo.core.usecase.VideoFrameExtractorService;
+import com.example.demo.infrastructure.repository.dynamo.VideoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,13 +35,15 @@ public class VideoController {
     private final ZipUtilsService zipUtilsService;
     private final SqsService sqsService;
     private final PessoaRepository pessoaRepository;
+    private final VideoRepository videoRepository;
 
 
-    public VideoController(VideoFrameExtractorService frameExtractorService, ZipUtilsService zipUtilsService, SqsService sqsService, PessoaRepository pessoaRepository) {
+    public VideoController(VideoFrameExtractorService frameExtractorService, ZipUtilsService zipUtilsService, SqsService sqsService, PessoaRepository pessoaRepository, VideoRepository videoRepository) {
         this.frameExtractorService = frameExtractorService;
         this.zipUtilsService = zipUtilsService;
         this.sqsService = sqsService;
         this.pessoaRepository = pessoaRepository;
+        this.videoRepository = videoRepository;
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -90,6 +95,16 @@ public class VideoController {
         pessoa.setId(UUID.randomUUID().toString());
         pessoaRepository.save(pessoa);
         return "Pessoa salva!";
+    }
+
+    @PostMapping(value = "/video/salvar")
+    public String salvarPessoa(@RequestBody Video video) {
+        video.setId(UUID.randomUUID().toString());
+        video.setStatus("PENDENTE");
+        video.setDataCriacao(Instant.now().toString());
+        video.setDataAtualizacao(Instant.now().toString());
+        videoRepository.save(video);
+        return "Video salvo!";
     }
 
     @GetMapping("pessoa/{id}")
