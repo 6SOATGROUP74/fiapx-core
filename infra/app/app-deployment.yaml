@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-pagamento-deployment
+  labels:
+    app: app-pagamento-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-pagamento-pod
+  template:
+    metadata:
+      labels:
+        app: app-pagamento-pod
+    spec:
+      serviceAccountName: rds-access-sa
+      containers:
+        - name: app-pagamento-container
+          image: 6soatgroup74/shogun-lanches-pagamento:prod
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-pagamento-configmap
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-pagamento-opaque
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-pagamento-opaque
+                  key: DB_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: actuator/health/readiness
+              port: 8091
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: actuator/health/liveness
+              port: 8091
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: actuator/health
+              port: 8091
+            initialDelaySeconds: 30
+            failureThreshold: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m

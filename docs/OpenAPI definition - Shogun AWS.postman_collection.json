@@ -1,0 +1,1230 @@
+{
+	"info": {
+		"_postman_id": "db2dad19-fb9b-4925-a091-4ee3a81b8bc9",
+		"name": "OpenAPI definition - Shogun AWS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36771389"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "Produto",
+					"item": [
+						{
+							"name": "Incluir produto",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function getRandomInt(min, max) {\r",
+											"    return Math.floor(Math.random() * (max - min + 1)) + min;\r",
+											"}\r",
+											"\r",
+											"const categorias = [\"LANCHE\", \"ACOMPANHAMENTO\", \"BEBIDA\", \"SOBREMESA\"];\r",
+											"const lanches = [\"Hamburguer\", \"Cheeseburger\", \"Frango Frito\", \"Hot Dog\"];\r",
+											"const acompanhamentos = [\"Batata Frita\", \"Onion Rings\", \"Salada\"];\r",
+											"const bebidas = [\"Coca-Cola\", \"Suco\", \"Água\", \"Café\"];\r",
+											"const sobremesas = [\"Sorvete\", \"Bolo\", \"Torta\", \"Pudim\"];\r",
+											"\r",
+											"const categoria = categorias[getRandomInt(0, categorias.length - 1)];\r",
+											"\r",
+											"let nome;\r",
+											"switch (categoria) {\r",
+											"    case \"LANCHE\":\r",
+											"        nome = lanches[getRandomInt(0, lanches.length - 1)];\r",
+											"        break;\r",
+											"    case \"ACOMPANHAMENTO\":\r",
+											"        nome = acompanhamentos[getRandomInt(0, acompanhamentos.length - 1)];\r",
+											"        break;\r",
+											"    case \"BEBIDA\":\r",
+											"        nome = bebidas[getRandomInt(0, bebidas.length - 1)];\r",
+											"        break;\r",
+											"    case \"SOBREMESA\":\r",
+											"        nome = sobremesas[getRandomInt(0, sobremesas.length - 1)];\r",
+											"        break;\r",
+											"}\r",
+											"\r",
+											"const valor = (Math.random() * 50).toFixed(2);\r",
+											"\r",
+											"pm.variables.set(\"categoria\", categoria);\r",
+											"pm.variables.set(\"nome\", nome);\r",
+											"pm.variables.set(\"valor\", valor);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"categoria\": \"{{categoria}}\",\n  \"nome\": \"{{nome}}\",\n  \"valor\": \"{{valor}}\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/produtos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"produtos"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"categoria\": \"LANCHE\",\n  \"nome\": \"X-Tudo\",\n  \"valor\": \"39.20\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/produtos",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"produtos"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"categoria\": \"LANCHE\",\n  \"nome\": \"X-Tudo\",\n  \"valor\": \"x\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/produtos",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"produtos"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Buscar produto por categoria",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v1/produtos/bebida",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"produtos",
+										"bebida"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/produtos/lanche",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"produtos",
+												"lanche"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/produtos/CATEGORIAINVALIDA",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"produtos",
+												"CATEGORIAINVALIDA"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Deletar produto",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/v1/produtos/:idProduto",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"produtos",
+										":idProduto"
+									],
+									"variable": [
+										{
+											"key": "idProduto",
+											"value": "<long>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/produtos/9999",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"produtos",
+												"9999"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Not Found",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/produtos/999999",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"produtos",
+												"999999"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Alterar produto",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"categoria\": \"<string>\",\n  \"nome\": \"<string>\",\n  \"valor\": \"<double>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/produtos/:idProduto",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"produtos",
+										":idProduto"
+									],
+									"variable": [
+										{
+											"key": "idProduto",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"categoria\": \"<string>\",\n  \"nome\": \"<string>\",\n  \"valor\": \"<double>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://{{baseUrl}}/v1/produtos/X",
+											"protocol": "http",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"produtos",
+												"X"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Pedido",
+					"item": [
+						{
+							"name": "Listar pedidos",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v1/pedidos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"pedidos"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/pedidos",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"pedidos"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/hal+json"
+										}
+									],
+									"cookie": [],
+									"body": "{}"
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/pedidos",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"pedidos"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/hal+json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"et1_e\": \"<string>\",\n  \"est_3_c\": \"<string>\"\n}"
+								},
+								{
+									"name": "Not Found",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/pedidos",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"pedidos"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/hal+json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"et1_e\": \"<string>\",\n  \"est_3_c\": \"<string>\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Incluir pedido",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"composicao\": [\n    {\n      \"id_produto\": \"1\",\n      \"quantidade\": \"1\"\n    },\n    {\n      \"id_produto\": \"2\",\n      \"quantidade\": \"1\"\n    },\n     {\n      \"id_produto\": \"3\",\n      \"quantidade\": \"1\"\n    },\n    {\n      \"id_produto\": \"4\",\n      \"quantidade\": \"2\"\n    }\n  ],\n  \"id_cliente\": \"1\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/pedidos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"pedidos"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"composicao\": [\n    {\n      \"id_produto\": \"1\",\n      \"quantidade\": \"2\"\n    },\n    {\n      \"id_produto\": \"2\",\n      \"quantidade\": \"2\"\n    }\n  ],\n  \"id_cliente\": \"5\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/pedidos",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"pedidos"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Atualizar pedido",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"numero_pedido\": \"23\",\n  \"etapa\": \"FINALIZADO\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/pedidos/atualiza",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"pedidos",
+										"atualiza"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"numero_pedido\": \"<long>\",\n  \"etapa\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/pedidos/atualiza",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"pedidos",
+												"atualiza"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Pagamento",
+					"item": [
+						{
+							"name": "Consulta status",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v1/pagamento?pagamentoId=8",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"pagamento"
+									],
+									"query": [
+										{
+											"key": "pagamentoId",
+											"value": "8",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Consulta status",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "http://ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456.us-east-1.elb.amazonaws.com/v1/pagamento?pagamentoId=1",
+											"protocol": "http",
+											"host": [
+												"ad0aeab5157fa45a1a137aa4c7ed68c0-1404610456",
+												"us-east-1",
+												"elb",
+												"amazonaws",
+												"com"
+											],
+											"path": [
+												"v1",
+												"pagamento"
+											],
+											"query": [
+												{
+													"key": "pagamentoId",
+													"value": "1",
+													"description": "(Required) "
+												}
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Realiza pagamento",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"numero_pedido\": \"23\",\n  \"tipo_do_pagamento\": \"QR_CODE_PAGBANK\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/pagamento",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"pagamento"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"numero_pedido\": \"1\",\n  \"tipo_do_pagamento\": \"QRCode Pix\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/pagamento",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"pagamento"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Not Found",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"numero_pedido\": \"9999\",\n  \"tipo_do_pagamento\": \"QRCode Pix\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/pagamento",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"pagamento"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Cliente",
+					"item": [
+						{
+							"name": "Incluir cliente",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Função para gerar um número aleatório entre min e max\r",
+											"function getRandomInt(min, max) {\r",
+											"    return Math.floor(Math.random() * (max - min + 1)) + min;\r",
+											"}\r",
+											"\r",
+											"// Função para gerar um CPF aleatório\r",
+											"function gerarCPF() {\r",
+											"    const n = 9;\r",
+											"    const n1 = getRandomInt(0, n);\r",
+											"    const n2 = getRandomInt(0, n);\r",
+											"    const n3 = getRandomInt(0, n);\r",
+											"    const n4 = getRandomInt(0, n);\r",
+											"    const n5 = getRandomInt(0, n);\r",
+											"    const n6 = getRandomInt(0, n);\r",
+											"    const n7 = getRandomInt(0, n);\r",
+											"    const n8 = getRandomInt(0, n);\r",
+											"    const n9 = getRandomInt(0, n);\r",
+											"\r",
+											"    const d1 = n9 * 2 + n8 * 3 + n7 * 4 + n6 * 5 + n5 * 6 + n4 * 7 + n3 * 8 + n2 * 9 + n1 * 10;\r",
+											"    const dig1 = 11 - (d1 % 11);\r",
+											"    const digit1 = dig1 >= 10 ? 0 : dig1;\r",
+											"\r",
+											"    const d2 = digit1 * 2 + n9 * 3 + n8 * 4 + n7 * 5 + n6 * 6 + n5 * 7 + n4 * 8 + n3 * 9 + n2 * 10 + n1 * 11;\r",
+											"    const dig2 = 11 - (d2 % 11);\r",
+											"    const digit2 = dig2 >= 10 ? 0 : dig2;\r",
+											"\r",
+											"    return `${n1}${n2}${n3}.${n4}${n5}${n6}.${n7}${n8}${n9}-${digit1}${digit2}`;\r",
+											"}\r",
+											"\r",
+											"// Função para gerar um nome aleatório\r",
+											"function gerarNome() {\r",
+											"    const nomes = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Lucas\", \"Fernanda\", \"Mateus\", \"Julia\"];\r",
+											"    const sobrenomes = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Lima\", \"Pereira\", \"Ferreira\", \"Almeida\"];\r",
+											"    const nome = nomes[getRandomInt(0, nomes.length - 1)];\r",
+											"    const sobrenome = sobrenomes[getRandomInt(0, sobrenomes.length - 1)];\r",
+											"    return `${nome} ${sobrenome}`;\r",
+											"}\r",
+											"\r",
+											"// Função para gerar um email aleatório\r",
+											"function gerarEmail(nome) {\r",
+											"    const dominios = [\"example.com\", \"email.com\", \"test.com\", \"sample.com\"];\r",
+											"    const nomeFormatado = nome.toLowerCase().replace(/ /g, \".\");\r",
+											"    const dominio = dominios[getRandomInt(0, dominios.length - 1)];\r",
+											"    return `${nomeFormatado}@${dominio}`;\r",
+											"}\r",
+											"\r",
+											"// Gera o CPF, nome e email\r",
+											"const cpf = gerarCPF();\r",
+											"const nome = gerarNome();\r",
+											"const email = gerarEmail(nome);\r",
+											"\r",
+											"// Define as variáveis no Postman\r",
+											"pm.variables.set(\"cpf\", cpf);\r",
+											"pm.variables.set(\"nome\", nome);\r",
+											"pm.variables.set(\"email\", email);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cpf\": \"{{cpf}}\",\n  \"email\": \"{{email}}\",\n  \"nome\": \"{{nome}}\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/clientes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"clientes"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"cpf\": \"48265391854\",\n  \"email\": \"igor@igor.com\",\n  \"nome\": \"Igu\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/clientes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"clientes"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"cpf\": \"48265391854\",\n  \"email\": \"igor@igor.com\",\n  \"nome\": \"Igu\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/v1/clientes",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"clientes"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Busca cliente",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/hal+json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v1/clientes/:cpf",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"clientes",
+										":cpf"
+									],
+									"variable": [
+										{
+											"key": "cpf",
+											"value": "<string>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Busca cliente",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/hal+json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/v1/clientes/48265391854",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"v1",
+												"clientes",
+												"48265391854"
+											]
+										}
+									},
+									"_postman_previewlanguage": "Text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "a636f83638809472aba50bf00bc0cb16-1578186132.us-east-1.elb.amazonaws.com"
+		}
+	]
+}

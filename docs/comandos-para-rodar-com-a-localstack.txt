@@ -1,0 +1,56 @@
+### SQS
+
+1️⃣ Criando uma Fila SQS
+
+Crie uma fila SQS com o seguinte comando:
+
+aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name minha-fila
+
+2️⃣ Listando Filas SQS
+
+Para listar as filas disponíveis, use o comando:
+
+aws --endpoint-url=http://localhost:4566 sqs list-queues
+
+
+
+### S3
+
+1)Criar o Bucket no S3 usando AWS CLI
+aws --endpoint-url=http://localhost:4566 s3 mb s3://meu-bucket
+
+
+2) Verificar os Buckets Criados
+
+aws --endpoint-url=http://localhost:4566 s3 ls
+
+
+### DynamoDB - Aporta pode ser 8000 caso rode a imagem isolada
+
+1) Verifique se o DynamoDB está rodando:
+
+aws --endpoint-url=http://localhost:4566 dynamodb list-tables
+
+2) Caso a tabela não tenha sido criada, crie manualmente:
+
+aws --endpoint-url=http://localhost:4566 dynamodb create-table \
+    --table-name Pessoa \
+    --attribute-definitions AttributeName=id,AttributeType=S \
+    --key-schema AttributeName=id,KeyType=HASH \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+
+3) Inserir um item:
+
+aws --endpoint-url=http://localhost:4566 dynamodb put-item \
+    --table-name Pessoa \
+    --item '{"Id": {"S": "1"}, "Nome": {"S": "João"}, "Idade": {"N": "30"}}'
+
+4) Consultar todos os itens:
+
+aws --endpoint-url=http://localhost:4566 dynamodb scan --table-name Pessoa
+
+5) Buscar um item específico:
+
+aws --endpoint-url=http://localhost:4566 dynamodb get-item \
+    --table-name Pessoa \
+    --key '{"Id": {"S": "1"}}'
