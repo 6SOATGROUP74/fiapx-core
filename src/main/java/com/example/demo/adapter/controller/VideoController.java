@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ public class VideoController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> realizaUploadDeVideo(@RequestPart("file") MultipartFile file) {
+
         try {
             // Salva o vídeo temporariamente
             File tempFile = File.createTempFile("uploaded_", ".mp4");
@@ -66,8 +68,17 @@ public class VideoController {
     }
 
     @PostMapping(value = "/sqs-teste")
-    public ResponseEntity<?> enviaMensagem(@RequestBody String mensagem){
+    public ResponseEntity<?> enviaMensagem(@RequestBody String mensagem) {
+
         sqsService.enviaMensagem(mensagem);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/sqs-teste-envia-arquivo")
+    public ResponseEntity<?> enviaMensagem(String bucketName, String fileName, String bucketDestino) throws IOException {
+
+        sqsService.enviarMensagemParaFila(bucketName, fileName, bucketDestino);
+
         return ResponseEntity.ok().build();
     }
 
