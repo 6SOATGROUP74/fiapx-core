@@ -1,7 +1,7 @@
 package com.example.demo.adapter.controller;
 
 import com.example.demo.core.domain.Pessoa;
-import com.example.demo.core.domain.Video;
+import com.example.demo.infrastructure.repository.entity.VideoEntity;
 import com.example.demo.infrastructure.repository.dynamo.PessoaRepository;
 import com.example.demo.core.usecase.SqsService;
 import com.example.demo.core.usecase.ZipUtilsService;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -98,7 +97,7 @@ public class VideoController {
     }
 
     @PostMapping(value = "/video/salvar")
-    public String salvarPessoa(@RequestBody Video video) {
+    public String salvarPessoa(@RequestBody VideoEntity video) {
         video.setId(UUID.randomUUID().toString());
         video.setStatus("PENDENTE");
         video.setDataCriacao(Instant.now().toString());
