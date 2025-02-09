@@ -34,7 +34,6 @@ public class RealizaDownloadVideoAdapterS3Impl implements RealizaDownloadVideoAd
             s3Client.getObject(builder -> builder.bucket(bucket).key(key)).transferTo(os);
         }
 
-
         logger.info("m=execute, status=success, msg=Arquivo baixado do bucket S3 com sucesso!");
         return tempFile;
     }
