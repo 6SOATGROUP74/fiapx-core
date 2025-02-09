@@ -45,31 +45,31 @@ public class VideoController {
         this.realizaDownloadVideoAdapter = realizaDownloadVideoAdapter;
     }
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> realizaUploadDeVideo(@RequestPart("file") MultipartFile file) {
-
-        try {
-            // Salva o vídeo temporariamente
-            File tempFile = File.createTempFile("uploaded_", ".mp4");
-            file.transferTo(tempFile);
-
-            // Define o diretório de saída para os frames
-            String outputDir = "frames_output";
-            new File(outputDir).mkdirs();
-
-            //Define onde será extraído o zip
-            String outputDirZip = "zips"; // Pasta onde o ZIP será salvo
-            String zipFileName = "frames_output.zip"; // Nome do ZIP
-
-            // Extrai os frames
-            frameExtractorService.extractFrames(tempFile.getAbsolutePath(), outputDir, outputDirZip, zipFileName);
-
-            System.out.println("Frames extraídos com sucesso! Verifique o diretório: " + outputDir);
-        } catch (IOException e) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar o vídeo: " + e.getMessage());
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body("Evento recebido: " );
-    }
+//    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> realizaUploadDeVideo(@RequestPart("file") MultipartFile file) {
+//
+//        try {
+//            // Salva o vídeo temporariamente
+//            File tempFile = File.createTempFile("uploaded_", ".mp4");
+//            file.transferTo(tempFile);
+//
+//            // Define o diretório de saída para os frames
+//            String outputDir = "frames_output";
+//            new File(outputDir).mkdirs();
+//
+//            //Define onde será extraído o zip
+//            String outputDirZip = "zips"; // Pasta onde o ZIP será salvo
+//            String zipFileName = "frames_output.zip"; // Nome do ZIP
+//
+//            // Extrai os frames
+//            frameExtractorService.extractFrames(tempFile.getAbsolutePath(), outputDir, outputDirZip, zipFileName);
+//
+//            System.out.println("Frames extraídos com sucesso! Verifique o diretório: " + outputDir);
+//        } catch (IOException e) {
+//            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar o vídeo: " + e.getMessage());
+//        }
+//        return ResponseEntity.status(HttpStatus.CREATED).body("Evento recebido: " );
+//    }
 
     @PostMapping(value = "/download-de-arquivo", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> downloadDeArquivo(@RequestBody S3Message s3Message) {
@@ -79,28 +79,28 @@ public class VideoController {
     }
 
 
-    @PostMapping(value = "/sqs-teste")
-    public ResponseEntity<?> enviaMensagem(@RequestBody String mensagem) {
+//    @PostMapping(value = "/sqs-teste")
+//    public ResponseEntity<?> enviaMensagem(@RequestBody String mensagem) {
+//
+//        sqsService.enviaMensagem(mensagem);
+//        return ResponseEntity.ok().build();
+//    }
 
-        sqsService.enviaMensagem(mensagem);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping(value = "/sqs-teste-envia-arquivo")
+//    public ResponseEntity<?> enviaMensagem(String bucketName, String fileName, String bucketDestino) throws IOException {
+//
+//        sqsService.enviarMensagemParaFila(bucketName, fileName, bucketDestino);
+//
+//        return ResponseEntity.ok().build();
+//    }
 
-    @PostMapping(value = "/sqs-teste-envia-arquivo")
-    public ResponseEntity<?> enviaMensagem(String bucketName, String fileName, String bucketDestino) throws IOException {
-
-        sqsService.enviarMensagemParaFila(bucketName, fileName, bucketDestino);
-
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping(value = "/sqs-teste-envia-arquivo-fluxo-real")
-    public ResponseEntity<?> enviaMensagem(@RequestBody S3Message s3Message){
-
-        sqsServiceDefinitivo.enviarMensagemParaFila(s3Message.getBucket(), s3Message.getKey(), "teste-de-envio");
-
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping(value = "/sqs-teste-envia-arquivo-fluxo-real")
+//    public ResponseEntity<?> enviaMensagem(@RequestBody S3Message s3Message){
+//
+//        sqsServiceDefinitivo.enviarMensagemParaFila(s3Message.getBucket(), s3Message.getKey(), "teste-de-envio");
+//
+//        return ResponseEntity.ok().build();
+//    }
 
 
     @PostMapping(value = "/testa-implementacao-fluxo")
@@ -111,13 +111,13 @@ public class VideoController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/video/salvar")
-    public String salvarPessoa(@RequestBody VideoEntity video) {
-        video.setId(UUID.randomUUID().toString());
-        video.setStatus("PENDENTE");
-        video.setDataCriacao(Instant.now().toString());
-        video.setDataAtualizacao(Instant.now().toString());
-        videoRepository.save(video);
-        return "Video salvo!";
-    }
+//    @PostMapping(value = "/video/salvar")
+//    public String salvarPessoa(@RequestBody VideoEntity video) {
+//        video.setId(UUID.randomUUID().toString());
+//        video.setStatus("PENDENTE");
+//        video.setDataCriacao(Instant.now().toString());
+//        video.setDataAtualizacao(Instant.now().toString());
+//        videoRepository.save(video);
+//        return "Video salvo!";
+//    }
 }

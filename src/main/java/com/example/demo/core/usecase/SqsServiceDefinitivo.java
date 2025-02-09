@@ -58,7 +58,7 @@ public class SqsServiceDefinitivo {
                 bucketName, fileName, bucketDestino);
 
         // Enviar a URL para a fila do SQS
-        sqsTemplate.send("fila-fluxo-pronto", s3Url);
+        sqsTemplate.send("upload-file-fiapx", s3Url);
     }
 
 //    @SqsListener("filaTeste")

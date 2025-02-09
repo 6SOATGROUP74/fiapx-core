@@ -52,7 +52,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
     @SneakyThrows
     @Override
-    @SqsListener("fila-fluxo-pronto")
+    @SqsListener("upload-file-fiapx")
     public void execute(String mensagem) {
 
         logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
