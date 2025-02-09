@@ -1,7 +1,7 @@
 package com.example.demo.adapter.controller;
 
 import com.example.demo.adapter.presenter.error.ErrorDetails;
-import com.example.demo.exceptions.PagamentoNotFoundException;
+import com.example.demo.exceptions.VideoNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -34,9 +34,9 @@ public class CustomExceptionHandlers {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(PagamentoNotFoundException.class)
+    @ExceptionHandler(VideoNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleMyCustomException(PagamentoNotFoundException ex, WebRequest request) {
+    public ResponseEntity<Object> handleMyCustomException(VideoNotFoundException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND, ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }

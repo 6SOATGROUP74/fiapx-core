@@ -1,5 +1,6 @@
 package com.example.demo.core.usecase;
 
+import com.example.demo.adapter.presenter.S3Message;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
@@ -11,11 +12,16 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 @Service
-public class SqsService {
+public class SqsServiceDefinitivo {
 
     private static final String SQS_URL = "http://localhost:4566/000000000000/minha-fila";
-    private static final Logger logger = LoggerFactory.getLogger(SqsService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqsServiceDefinitivo.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -23,7 +29,7 @@ public class SqsService {
 
     private final S3Client s3Client;
 
-    public SqsService(S3Client s3Client) {
+    public SqsServiceDefinitivo(S3Client s3Client) {
         this.s3Client = s3Client;
     }
 
@@ -37,11 +43,22 @@ public class SqsService {
         // URL do arquivo no S3
         //String s3Url = String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
         //String s3Url = String.format("http://localhost:4566/%s/%s", bucketName, fileName);
-        String s3Url = String.format("{\"bucketOrigem\": \"%s\", \"chaveArquivo\": \"%s\", \"bucketDestino\": \"%s\"}",
+        String s3Url = String.format("{\"bucket\": \"%s\", \"key\": \"%s\", \"bucketDestino\": \"%s\"}",
                 bucketName, fileName, bucketDestino);
 
         // Enviar a URL para a fila do SQS
-        sqsTemplate.send("filaTeste", s3Url);
+        sqsTemplate.send("fila-real-de-teste", s3Url);
+    }
+
+    public void enviarMensagemParaFilaFluxoPronto(String bucketName, String fileName, String bucketDestino) {
+        // URL do arquivo no S3
+        //String s3Url = String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+        //String s3Url = String.format("http://localhost:4566/%s/%s", bucketName, fileName);
+        String s3Url = String.format("{\"bucket\": \"%s\", \"key\": \"%s\", \"bucketDestino\": \"%s\"}",
+                bucketName, fileName, bucketDestino);
+
+        // Enviar a URL para a fila do SQS
+        sqsTemplate.send("upload-file-fiapx", s3Url);
     }
 
 //    @SqsListener("filaTeste")
@@ -49,21 +66,27 @@ public class SqsService {
 //        logger.info("Mensagem recebida - {}", mensagem);
 //    }
 
-    @SqsListener("filaTeste")
+    @SqsListener("fila-real-de-teste")
     public void processarMensagem(String mensagem) {
         try {
             // Converter JSON para objeto
             JsonNode jsonNode = objectMapper.readTree(mensagem);
             //bucketOrigem
-            String bucketOrigem = jsonNode.get("bucketOrigem").asText();
+            String bucketOrigem = jsonNode.get("bucket").asText();
 
             //chaveArquivo
-            String chaveArquivo = jsonNode.get("chaveArquivo").asText();
+            String chaveArquivo = jsonNode.get("key").asText();
+
+            S3Message s3Message = new S3Message();
+            s3Message.setBucket(bucketOrigem);
+            s3Message.setKey(chaveArquivo);
 
             //bucketDestino
             String bucketDestino = jsonNode.get("bucketDestino").asText();
 
-            System.out.println("Copiando arquivo de " + bucketOrigem + " para " + bucketDestino);
+
+            //baixa arquivo
+            File arquivoBaixado = downloadFileFromS3("meu-bucket", "zips/arquivos.zip");
 
             // Copiar o arquivo de um bucket para outro
             CopyObjectRequest copyRequest = CopyObjectRequest.builder()
@@ -80,6 +103,17 @@ public class SqsService {
         } catch (Exception e) {
             System.err.println("Erro ao processar mensagem do SQS: " + e.getMessage());
         }
+    }
+
+    private File downloadFileFromS3(String bucket, String key) throws IOException {
+        System.out.printf("Baixando arquivo do S3: %s / %s", bucket, key);
+        File tempFile = File.createTempFile("s3file", ".tmp");
+
+        try (OutputStream os = new FileOutputStream(tempFile)) {
+            s3Client.getObject(builder -> builder.bucket(bucket).key(key)).transferTo(os);
+        }
+
+        return tempFile;
     }
 
 }

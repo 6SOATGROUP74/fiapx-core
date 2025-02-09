@@ -1,28 +1,29 @@
-package com.example.demo.core.usecase;
+package com.example.demo.adapter.gateway.interfaces.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.demo.adapter.gateway.interfaces.RealizaUploadVideoAdapter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Service
-public class S3Service {
+@Component
+public class RealizaUploadVideoAdapterS3Impl implements RealizaUploadVideoAdapter {
 
     private final AmazonS3 amazonS3;
     private final String bucketName;
 
-    public S3Service(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket.upload}") String bucketName) {
+    public RealizaUploadVideoAdapterS3Impl(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket.final}") String bucketName) {
         this.amazonS3 = amazonS3;
         this.bucketName = bucketName;
     }
 
-    public String uploadFile(String directory, MultipartFile file) throws IOException {
-
+    @Override
+    public void execute(String directory, MultipartFile file) throws IOException {
         // Gera o caminho completo para o arquivo no diretório
         String fileName = directory + "/" + file.getOriginalFilename();
 
@@ -35,7 +36,5 @@ public class S3Service {
 
         // Apaga o arquivo temporário após o upload
         Files.delete(tempFile);
-
-        return "File uploaded: " + fileName;
     }
 }

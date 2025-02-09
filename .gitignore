@@ -5,6 +5,10 @@ target/
 !**/src/test/**/target/
 data/
 
+/zips/
+/zips_output/
+/frames_output/
+
 ### STS ###
 .apt_generated
 .classpath
