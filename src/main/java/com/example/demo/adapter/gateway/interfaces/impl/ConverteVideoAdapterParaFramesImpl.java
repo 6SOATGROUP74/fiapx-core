@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -12,6 +13,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAdapter {
+
+    @Value("${diretorio.saida.frames}")
+    String sourceDirPath;
 
     @SneakyThrows
     @Override
@@ -22,8 +26,7 @@ public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAda
         arquivo.transferTo(tempFile);
 
         // Define o diretório de saída para os frames
-        String outputDir = "frames_output";
-        new File(outputDir).mkdirs();
+        new File(sourceDirPath).mkdirs();
 
         //Define onde será extraído o zip
         String outputDirZip = "zips"; // Pasta onde o ZIP será salvo
@@ -43,7 +46,7 @@ public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAda
 
             BufferedImage bufferedImage = converter.convert(frame);
             if (bufferedImage != null) {
-                File output = new File(outputDir + "/frame_" + frameNumber + ".png");
+                File output = new File(sourceDirPath + "/frame_" + frameNumber + ".png");
                 ImageIO.write(bufferedImage, "png", output);
                 frameNumber++;
             }
@@ -51,6 +54,6 @@ public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAda
 
         grabber.stop();
         grabber.release();
-        System.out.println("Frames extraídos com sucesso para: " + outputDir);
+        System.out.println("Frames extraídos com sucesso para: " + sourceDirPath);
     }
 }

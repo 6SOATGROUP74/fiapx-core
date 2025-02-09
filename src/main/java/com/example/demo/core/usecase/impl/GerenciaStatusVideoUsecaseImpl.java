@@ -16,10 +16,26 @@ public class GerenciaStatusVideoUsecaseImpl implements GerenciaStatusVideoUsecas
     }
 
     @Override
+    public Video salvaVideo(Video video) {
+        return gerenciaStatusVideoAdapter.salvaVideo(video);
+    }
+
+    @Override
+    public Video buscaVideo(String id) {
+        return gerenciaStatusVideoAdapter.buscaVideo(id);
+    }
+
+    @Override
     public Video alteraStatus(String id, StatusProcessamento statusProcessamento) {
-        Video videoAtual = gerenciaStatusVideoAdapter.execute(id);
+        Video videoAtual = gerenciaStatusVideoAdapter.alteraStatus(id, statusProcessamento);
         videoAtual.setStatus(statusProcessamento.toString());
+        videoAtual.setDataCriacao(Instant.now().toString());
         videoAtual.setDataAtualizacao(Instant.now().toString());
-        return videoAtual;
+        return gerenciaStatusVideoAdapter.salvaVideo(videoAtual);
+    }
+
+    @Override
+    public void deletaVideo(String id) {
+        gerenciaStatusVideoAdapter.deletaVideo(id);
     }
 }

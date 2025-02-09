@@ -1,4 +1,4 @@
-package com.example.demo.infrastructure.integration.pagbank.presenter;
+package com.example.demo.infrastructure.repository.presenter;
 
 import com.example.demo.core.domain.Video;
 import com.example.demo.infrastructure.repository.entity.VideoEntity;
@@ -12,4 +12,6 @@ public interface VideoEntityMapper {
 
     Video mapFrom(VideoEntity videoEntity);
 
+
+    VideoEntity mapFrom(Video video);
 }

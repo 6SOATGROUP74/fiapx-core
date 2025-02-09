@@ -2,31 +2,46 @@ package com.example.demo.adapter.gateway.interfaces.impl;
 
 import com.example.demo.adapter.gateway.interfaces.ConverteVideoZipAdapter;
 import com.example.demo.adapter.gateway.interfaces.ConverteVideoFrameAdapter;
+import com.example.demo.adapter.gateway.interfaces.GerenciaStatusVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.ProcessaVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.RealizaDownloadVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.RealizaUploadVideoAdapter;
 import com.example.demo.adapter.presenter.S3Message;
+import com.example.demo.core.domain.StatusProcessamento;
+import com.example.demo.core.domain.Video;
 import com.example.demo.core.usecase.ConverteFileEmMultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.Instant;
+import java.util.UUID;
 
 @Component
 public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
+    private static final Logger logger = LogManager.getLogger(ProcessaVideoAdapterSqsImpl.class);
     ConverteVideoZipAdapter converteVideoZipAdapter;
     ConverteVideoFrameAdapter converteVideoFrameAdapter;
     RealizaUploadVideoAdapter realizaUploadVideoAdapter;
     RealizaDownloadVideoAdapter realizaDownloadVideoAdapter;
+    GerenciaStatusVideoAdapter gerenciaStatusVideoAdapter;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${diretorio.saida.zip}")
+    String outputDirPath;
 
     @SneakyThrows
     @Override
     public void execute(String mensagem) {
+
+        logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
 
         try {
             // Converter JSON para objeto
@@ -47,23 +62,33 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             //baixa arquivo
             File arquivoBaixado = realizaDownloadVideoAdapter.execute("meu-bucket", "zips/arquivos.zip");
 
+            //Status atual do video
+            Video videoRecebido = new Video();
+            videoRecebido.setId(UUID.randomUUID().toString());
+            videoRecebido.setNome(arquivoBaixado.getName());
+            videoRecebido.setStatus(StatusProcessamento.PENDENTE.toString());
+            videoRecebido.setDataCriacao(Instant.now().toString());
+            videoRecebido.setDataAtualizacao(Instant.now().toString());
+
+            gerenciaStatusVideoAdapter.salvaVideo(videoRecebido);
+
             MultipartFile arquivoEmMultipartFile = new ConverteFileEmMultipartFile(arquivoBaixado);
 
             converteVideoFrameAdapter.execute(arquivoEmMultipartFile);
 
-            //Converter
-            converteVideoZipAdapter.execute()
+            //Converter em Zip
+            MultipartFile arquivoZipado = converteVideoZipAdapter.execute(arquivoEmMultipartFile);
 
-            //realizaUploadVideoAdapter.execute("ss", "");
+            //Realiza Upload no S3
+            realizaUploadVideoAdapter.execute(outputDirPath, arquivoZipado);
 
-            String nomeDoArquivoZip = "nomeDoArquivoZip";
-
-            //MultipartFile arquivoZipado = converteVideoAdapter.execute(nomeDoArquivoZip);
-            //realizaUploadVideoAdapter.execute("diretorio_concluído_do_bucket", arquivoZipado);
+            //Finaliza processamento e altera para Status concluído
+            gerenciaStatusVideoAdapter.alteraStatus(videoRecebido.getId(), StatusProcessamento.CONCLUIDO);
 
 
+            logger.info("m=execute, status=sucess, msg=Video processado com sucesso={}", mensagem);
         } catch (Exception e) {
-            System.err.println("Erro ao processar mensagem do SQS: " + e.getMessage());
+            logger.error("m=execute, status=error, msg=Mensagem de processamento de vídeo falhou mensagem={} exception={}", mensagem, e.getMessage());;
         }
     }
 }
