@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 @Component
 public class RealizaDownloadVideoAdapterS3Impl implements RealizaDownloadVideoAdapter {
@@ -26,11 +27,13 @@ public class RealizaDownloadVideoAdapterS3Impl implements RealizaDownloadVideoAd
     @Override
     public File execute(String bucket, String key) {
         logger.info("m=execute, status=init, msg=Baixando vídeo do bucket S3={}, nomeDoArquivo={}", bucket, key);
-        File tempFile = File.createTempFile("s3file", ".tmp");
+
+        File tempFile = Files.createTempFile("$", "$" + key.replace("/", "_")).toFile();
 
         try (OutputStream os = new FileOutputStream(tempFile)) {
             s3Client.getObject(builder -> builder.bucket(bucket).key(key)).transferTo(os);
         }
+
 
         logger.info("m=execute, status=success, msg=Arquivo baixado do bucket S3 com sucesso!");
         return tempFile;

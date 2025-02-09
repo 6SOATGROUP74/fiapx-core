@@ -31,6 +31,8 @@ public class ConverteVideoZipAdapterParaZipImpl implements ConverteVideoZipAdapt
         Path sourceDir = Paths.get(sourceDirPath);
         Path outputDir = Paths.get(outputDirPath);
         Files.createDirectories(outputDir); // Garante que o diretório de saída existe
+        //Renomea o arquivo para o upload ser igual ao nome original
+        String zipFilename = file.getOriginalFilename().replace(".mp4", ".zip").replaceAll("^\\$[^\\$]*\\$", "");
 
         Path zipFilePath = outputDir.resolve(file.getOriginalFilename()); // Define o caminho do ZIP
 
@@ -67,7 +69,7 @@ public class ConverteVideoZipAdapterParaZipImpl implements ConverteVideoZipAdapt
         String contentType = "application/zip";
 
         // Cria um MultipartFile com a implementação customizada
-        MultipartFile multipartFile = new ByteArrayMultipartFile(file.getName(), file.getOriginalFilename(), contentType, zipBytes);
+        MultipartFile multipartFile = new ByteArrayMultipartFile(file.getName(), zipFilename, contentType, zipBytes);
         return multipartFile;
     }
 }
