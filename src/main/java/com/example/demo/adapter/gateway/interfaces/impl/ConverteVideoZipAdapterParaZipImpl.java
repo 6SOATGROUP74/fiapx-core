@@ -27,11 +27,12 @@ public class ConverteVideoZipAdapterParaZipImpl implements ConverteVideoZipAdapt
 
     @Override
     public MultipartFile execute(MultipartFile file) throws IOException {
+
         Path sourceDir = Paths.get(sourceDirPath);
         Path outputDir = Paths.get(outputDirPath);
         Files.createDirectories(outputDir); // Garante que o diretório de saída existe
 
-        Path zipFilePath = outputDir.resolve(file.getName()); // Define o caminho do ZIP
+        Path zipFilePath = outputDir.resolve(file.getOriginalFilename()); // Define o caminho do ZIP
 
         // Cria um ByteArrayOutputStream para armazenar o conteúdo ZIP na memória
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -63,11 +64,10 @@ public class ConverteVideoZipAdapterParaZipImpl implements ConverteVideoZipAdapt
 
         // Converte os bytes do arquivo ZIP em um MultipartFile
         byte[] zipBytes = byteArrayOutputStream.toByteArray();
-        String filename = "arquivos.zip";
         String contentType = "application/zip";
 
         // Cria um MultipartFile com a implementação customizada
-        MultipartFile multipartFile = new ByteArrayMultipartFile("file", filename, contentType, zipBytes);
+        MultipartFile multipartFile = new ByteArrayMultipartFile(file.getName(), file.getOriginalFilename(), contentType, zipBytes);
         return multipartFile;
     }
 }

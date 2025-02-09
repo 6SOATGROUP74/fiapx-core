@@ -32,6 +32,9 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
     @Value("${diretorio.saida.zip}")
     String outputDirPath;
 
+    @Value("${cloud.aws.s3.bucket.upload}")
+    String bucketDeDownload;
+
     ConverteVideoZipAdapter converteVideoZipAdapter;
     ConverteVideoFrameAdapter converteVideoFrameAdapter;
     RealizaUploadVideoAdapter realizaUploadVideoAdapter;
@@ -67,11 +70,8 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             s3Message.setBucket(bucketOrigem);
             s3Message.setKey(chaveArquivo);
 
-            //bucketDestino
-            String bucketDestino = jsonNode.get("bucketDestino").asText();
-
             //baixa arquivo
-            File arquivoBaixado = realizaDownloadVideoAdapter.execute("meu-bucket", "Bryan-Herman-360-Flip.mp4");
+            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, chaveArquivo);
 
             //Status atual do video
             Video videoRecebido = new Video();
@@ -95,7 +95,6 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
             //Finaliza processamento e altera para Status concluído
             gerenciaStatusVideoAdapter.alteraStatus(videoRecebido.getId(), StatusProcessamento.CONCLUIDO);
-
 
             logger.info("m=execute, status=success, msg=Video processado com sucesso={}", mensagem);
         } catch (Exception e) {

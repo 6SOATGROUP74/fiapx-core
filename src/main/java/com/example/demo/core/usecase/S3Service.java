@@ -16,7 +16,7 @@ public class S3Service {
     private final AmazonS3 amazonS3;
     private final String bucketName;
 
-    public S3Service(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket}") String bucketName) {
+    public S3Service(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket.upload}") String bucketName) {
         this.amazonS3 = amazonS3;
         this.bucketName = bucketName;
     }

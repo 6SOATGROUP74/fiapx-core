@@ -17,7 +17,7 @@ public class RealizaUploadVideoAdapterS3Impl implements RealizaUploadVideoAdapte
     private final AmazonS3 amazonS3;
     private final String bucketName;
 
-    public RealizaUploadVideoAdapterS3Impl(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket}") String bucketName) {
+    public RealizaUploadVideoAdapterS3Impl(AmazonS3 amazonS3, @Value("${cloud.aws.s3.bucket.final}") String bucketName) {
         this.amazonS3 = amazonS3;
         this.bucketName = bucketName;
     }
