@@ -1,12 +1,12 @@
 package com.example.demo.exceptions;
 
-public class PagamentoNotFoundException extends RuntimeException {
+public class VideoNotFoundException extends RuntimeException {
 
-    public PagamentoNotFoundException(String message) {
+    public VideoNotFoundException(String message) {
         super(message);
     }
 
-    public PagamentoNotFoundException(String message, Throwable cause) {
+    public VideoNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 }

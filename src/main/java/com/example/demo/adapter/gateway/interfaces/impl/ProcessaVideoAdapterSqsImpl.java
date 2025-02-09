@@ -12,6 +12,7 @@ import com.example.demo.core.domain.Video;
 import com.example.demo.core.usecase.ConverteFileEmMultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +28,10 @@ import java.util.UUID;
 public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
     private static final Logger logger = LogManager.getLogger(ProcessaVideoAdapterSqsImpl.class);
+
+    @Value("${diretorio.saida.zip}")
+    String outputDirPath;
+
     ConverteVideoZipAdapter converteVideoZipAdapter;
     ConverteVideoFrameAdapter converteVideoFrameAdapter;
     RealizaUploadVideoAdapter realizaUploadVideoAdapter;
@@ -34,11 +39,17 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
     GerenciaStatusVideoAdapter gerenciaStatusVideoAdapter;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${diretorio.saida.zip}")
-    String outputDirPath;
+    public ProcessaVideoAdapterSqsImpl(ConverteVideoZipAdapter converteVideoZipAdapter, ConverteVideoFrameAdapter converteVideoFrameAdapter, RealizaUploadVideoAdapter realizaUploadVideoAdapter, RealizaDownloadVideoAdapter realizaDownloadVideoAdapter, GerenciaStatusVideoAdapter gerenciaStatusVideoAdapter) {
+        this.converteVideoZipAdapter = converteVideoZipAdapter;
+        this.converteVideoFrameAdapter = converteVideoFrameAdapter;
+        this.realizaUploadVideoAdapter = realizaUploadVideoAdapter;
+        this.realizaDownloadVideoAdapter = realizaDownloadVideoAdapter;
+        this.gerenciaStatusVideoAdapter = gerenciaStatusVideoAdapter;
+    }
 
     @SneakyThrows
     @Override
+    @SqsListener("fila-fluxo-pronto")
     public void execute(String mensagem) {
 
         logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
@@ -60,7 +71,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             String bucketDestino = jsonNode.get("bucketDestino").asText();
 
             //baixa arquivo
-            File arquivoBaixado = realizaDownloadVideoAdapter.execute("meu-bucket", "zips/arquivos.zip");
+            File arquivoBaixado = realizaDownloadVideoAdapter.execute("meu-bucket", "Bryan-Herman-360-Flip.mp4");
 
             //Status atual do video
             Video videoRecebido = new Video();
@@ -86,7 +97,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             gerenciaStatusVideoAdapter.alteraStatus(videoRecebido.getId(), StatusProcessamento.CONCLUIDO);
 
 
-            logger.info("m=execute, status=sucess, msg=Video processado com sucesso={}", mensagem);
+            logger.info("m=execute, status=success, msg=Video processado com sucesso={}", mensagem);
         } catch (Exception e) {
             logger.error("m=execute, status=error, msg=Mensagem de processamento de vídeo falhou mensagem={} exception={}", mensagem, e.getMessage());;
         }

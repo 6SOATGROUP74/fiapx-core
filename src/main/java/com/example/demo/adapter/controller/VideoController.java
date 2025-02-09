@@ -1,5 +1,6 @@
 package com.example.demo.adapter.controller;
 
+import com.example.demo.adapter.gateway.interfaces.RealizaDownloadVideoAdapter;
 import com.example.demo.adapter.presenter.S3Message;
 import com.example.demo.core.usecase.SqsServiceDefinitivo;
 import com.example.demo.infrastructure.repository.entity.VideoEntity;
@@ -32,14 +33,16 @@ public class VideoController {
     private final SqsService sqsService;
     private final VideoRepository videoRepository;
     private final SqsServiceDefinitivo sqsServiceDefinitivo;
+    private final RealizaDownloadVideoAdapter realizaDownloadVideoAdapter;
 
 
-    public VideoController(VideoFrameExtractorService frameExtractorService, ZipUtilsService zipUtilsService, SqsService sqsService, VideoRepository videoRepository, SqsServiceDefinitivo sqsServiceDefinitivo) {
+    public VideoController(VideoFrameExtractorService frameExtractorService, ZipUtilsService zipUtilsService, SqsService sqsService, VideoRepository videoRepository, SqsServiceDefinitivo sqsServiceDefinitivo, RealizaDownloadVideoAdapter realizaDownloadVideoAdapter) {
         this.frameExtractorService = frameExtractorService;
         this.zipUtilsService = zipUtilsService;
         this.sqsService = sqsService;
         this.videoRepository = videoRepository;
         this.sqsServiceDefinitivo = sqsServiceDefinitivo;
+        this.realizaDownloadVideoAdapter = realizaDownloadVideoAdapter;
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -68,6 +71,14 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Evento recebido: " );
     }
 
+    @PostMapping(value = "/download-de-arquivo", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> downloadDeArquivo(@RequestBody S3Message s3Message) {
+        File file = realizaDownloadVideoAdapter.execute(s3Message.getBucket(), s3Message.getKey());
+
+        return ResponseEntity.ok().body(file);
+    }
+
+
     @PostMapping(value = "/sqs-teste")
     public ResponseEntity<?> enviaMensagem(@RequestBody String mensagem) {
 
@@ -91,6 +102,14 @@ public class VideoController {
         return ResponseEntity.ok().build();
     }
 
+
+    @PostMapping(value = "/testa-implementacao-fluxo")
+    public ResponseEntity<?> enviaMensagemParaFluxoImplementado(@RequestBody S3Message s3Message){
+
+        sqsServiceDefinitivo.enviarMensagemParaFilaFluxoPronto(s3Message.getBucket(), s3Message.getKey(), "teste-de-envio");
+
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping(value = "/video/salvar")
     public String salvarPessoa(@RequestBody VideoEntity video) {

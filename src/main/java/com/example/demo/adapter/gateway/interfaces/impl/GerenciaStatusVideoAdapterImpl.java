@@ -8,11 +8,17 @@ import com.example.demo.infrastructure.repository.dynamo.VideoRepository;
 import com.example.demo.infrastructure.repository.entity.VideoEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+
 @Component
 public class GerenciaStatusVideoAdapterImpl implements GerenciaStatusVideoAdapter {
     
     VideoRepository videoRepository;
-    
+
+    public GerenciaStatusVideoAdapterImpl(VideoRepository videoRepository) {
+        this.videoRepository = videoRepository;
+    }
+
     @Override
     public Video salvaVideo(Video video) {
         return VideoEntityMapper.INSTANCE.mapFrom(videoRepository.save(VideoEntityMapper.INSTANCE.mapFrom(video)));
@@ -27,7 +33,8 @@ public class GerenciaStatusVideoAdapterImpl implements GerenciaStatusVideoAdapte
     public Video alteraStatus(String id, StatusProcessamento statusProcessamento) {
         VideoEntity videoAtual = videoRepository.findById(id).get();
         videoAtual.setStatus(statusProcessamento.toString());
-        return VideoEntityMapper.INSTANCE.mapFrom(videoAtual);
+        videoAtual.setDataAtualizacao(Instant.now().toString());
+        return VideoEntityMapper.INSTANCE.mapFrom(videoRepository.save(videoAtual));
     }
 
     @Override

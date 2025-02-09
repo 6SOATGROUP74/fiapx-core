@@ -6,12 +6,14 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+@Component
 public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAdapter {
 
     @Value("${diretorio.saida.frames}")
@@ -27,10 +29,6 @@ public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAda
 
         // Define o diretório de saída para os frames
         new File(sourceDirPath).mkdirs();
-
-        //Define onde será extraído o zip
-        String outputDirZip = "zips"; // Pasta onde o ZIP será salvo
-        String zipFileName = "frames_output.zip"; // Nome do ZIP
 
         // ############################## Conversão de frames ##############################
 

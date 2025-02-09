@@ -50,6 +50,17 @@ public class SqsServiceDefinitivo {
         sqsTemplate.send("fila-real-de-teste", s3Url);
     }
 
+    public void enviarMensagemParaFilaFluxoPronto(String bucketName, String fileName, String bucketDestino) {
+        // URL do arquivo no S3
+        //String s3Url = String.format("https://%s.s3.amazonaws.com/%s", bucketName, fileName);
+        //String s3Url = String.format("http://localhost:4566/%s/%s", bucketName, fileName);
+        String s3Url = String.format("{\"bucket\": \"%s\", \"key\": \"%s\", \"bucketDestino\": \"%s\"}",
+                bucketName, fileName, bucketDestino);
+
+        // Enviar a URL para a fila do SQS
+        sqsTemplate.send("fila-fluxo-pronto", s3Url);
+    }
+
 //    @SqsListener("filaTeste")
 //    public void consomeEvento(String mensagem) {
 //        logger.info("Mensagem recebida - {}", mensagem);
