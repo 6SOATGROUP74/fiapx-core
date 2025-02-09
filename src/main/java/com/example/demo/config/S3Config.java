@@ -1,4 +1,4 @@
-package com.example.demo.core.usecase;
+package com.example.demo.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

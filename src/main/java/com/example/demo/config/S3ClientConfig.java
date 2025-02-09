@@ -1,4 +1,4 @@
-package com.example.demo.core.usecase;
+package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 import java.net.URI;
 
 @Configuration
-public class AwsConfig {
+public class S3ClientConfig {
 
     @Bean
     public S3Client s3Client() {

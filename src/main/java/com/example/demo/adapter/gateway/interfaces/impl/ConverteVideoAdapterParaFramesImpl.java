@@ -1,29 +1,37 @@
-package com.example.demo.core.usecase;
+package com.example.demo.adapter.gateway.interfaces.impl;
 
+import com.example.demo.adapter.gateway.interfaces.ConverteVideoFrameAdapter;
+import lombok.SneakyThrows;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
-@Service
-public class VideoFrameExtractorService {
+public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAdapter {
 
-    @Autowired
-    ZipUtilsService service;
+    @SneakyThrows
+    @Override
+    public void execute(MultipartFile arquivo) {
 
-    @Autowired
-    S3Service s3Service;
+        // Salva o vídeo temporariamente
+        File tempFile = File.createTempFile("uploaded_", ".mp4");
+        arquivo.transferTo(tempFile);
 
-    public void extractFrames(String videoPath, String outputDir, String outputDirZip, String zipFileName) throws IOException {
+        // Define o diretório de saída para os frames
+        String outputDir = "frames_output";
+        new File(outputDir).mkdirs();
 
-        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoPath);
+        //Define onde será extraído o zip
+        String outputDirZip = "zips"; // Pasta onde o ZIP será salvo
+        String zipFileName = "frames_output.zip"; // Nome do ZIP
+
+        // ############################## Conversão de frames ##############################
+
+        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(tempFile.getAbsolutePath());
         grabber.start();
 
         Java2DFrameConverter converter = new Java2DFrameConverter();
@@ -44,11 +52,5 @@ public class VideoFrameExtractorService {
         grabber.stop();
         grabber.release();
         System.out.println("Frames extraídos com sucesso para: " + outputDir);
-
-
-        // converte em zip
-        MultipartFile multipartFile = service.zipFrames(outputDir, outputDirZip, zipFileName); // Compacta e salva no diretório especificado
-
-        s3Service.uploadFile(outputDirZip, multipartFile);
     }
 }

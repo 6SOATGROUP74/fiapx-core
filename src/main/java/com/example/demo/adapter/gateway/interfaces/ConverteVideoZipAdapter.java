@@ -4,6 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-public interface RealizaUploadVideoAdapter {
-    void execute(String diretorio, MultipartFile nomeDoArquivo) throws IOException;
+public interface ConverteVideoZipAdapter {
+    MultipartFile execute(MultipartFile arquivo) throws IOException;
 }

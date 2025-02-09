@@ -6,7 +6,6 @@ import com.example.demo.infrastructure.integration.pagbank.presenter.VideoEntity
 import com.example.demo.infrastructure.repository.dynamo.VideoRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 
 @Component
 public class GerenciaStatusVideoAdapterImpl implements GerenciaStatusVideoAdapter {
