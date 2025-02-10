@@ -45,7 +45,6 @@ public class VideoController {
     public ResponseEntity<?> downloadDeArquivo(@RequestBody S3Message s3Message) {
         File file = realizaDownloadVideoAdapter.execute(s3Message.getBucket(), s3Message.getKey());
 
-        // Nome do arquivo desejado
         String novoNomeArquivo = file.getName().replace(".mp4", ".zip").replaceAll("^\\$[^\\$]*\\$", "");
 
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
@@ -55,14 +54,6 @@ public class VideoController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .contentLength(file.length())
                 .body(resource);
-    }
-
-    @PostMapping(value = "/testa-implementacao-fluxo")
-    public ResponseEntity<?> enviaMensagemParaFluxoImplementado(@RequestBody S3Message s3Message){
-
-        sqsServiceDefinitivo.enviarMensagemParaFilaFluxoPronto(s3Message.getBucket(), s3Message.getKey(), "teste-de-envio");
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/listar-videos-processados")
