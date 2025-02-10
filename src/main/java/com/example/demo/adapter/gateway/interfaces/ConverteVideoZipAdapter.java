@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface ConverteVideoZipAdapter {
-    MultipartFile execute(MultipartFile arquivo) throws IOException;
+    String execute(String nomeArquivo) throws IOException;
 }

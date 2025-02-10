@@ -1,18 +1,15 @@
 package com.example.demo.adapter.gateway.interfaces.impl;
 
 import com.example.demo.adapter.gateway.interfaces.ConverteVideoZipAdapter;
-import com.example.demo.core.usecase.ByteArrayMultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -26,50 +23,37 @@ public class ConverteVideoZipAdapterParaZipImpl implements ConverteVideoZipAdapt
     String outputDirPath;
 
     @Override
-    public MultipartFile execute(MultipartFile file) throws IOException {
+    public String execute(String nomeArquivo) throws IOException {
+
+        final String nomeArquivoTratado = nomeArquivo.replace(".mp4", "");
 
         Path sourceDir = Paths.get(sourceDirPath);
         Path outputDir = Paths.get(outputDirPath);
-        Files.createDirectories(outputDir); // Garante que o diretório de saída existe
-        //Renomea o arquivo para o upload ser igual ao nome original
-        String zipFilename = file.getOriginalFilename().replace(".mp4", ".zip").replaceAll("^\\$[^\\$]*\\$", "");
+        Files.createDirectories(outputDir);
 
-        Path zipFilePath = outputDir.resolve(file.getOriginalFilename()); // Define o caminho do ZIP
+        String zipFilename = "frames-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "-" + nomeArquivoTratado + ".zip";
 
-        // Cria um ByteArrayOutputStream para armazenar o conteúdo ZIP na memória
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        Path zipFilePath = outputDir.resolve(zipFilename);
 
         try (
-                FileOutputStream fileOut = new FileOutputStream(zipFilePath.toFile());  // Para gravar no sistema de arquivos
-                ZipOutputStream zipOutToFile = new ZipOutputStream(fileOut);            // Para gravar o arquivo ZIP fisicamente
-                ZipOutputStream zipOutToMemory = new ZipOutputStream(byteArrayOutputStream)  // Para gravar na memória
+                FileOutputStream fileOut = new FileOutputStream(zipFilePath.toFile());
+                ZipOutputStream zos = new ZipOutputStream(fileOut);
         ) {
             Files.walk(sourceDir)
-                    .filter(path -> !Files.isDirectory(path)) // Apenas arquivos, ignorando diretórios
+                    .filter(path -> !Files.isDirectory(path))
                     .forEach(path -> {
-                        ZipEntry zipEntry = new ZipEntry(sourceDir.relativize(path).toString());
-                        try (InputStream fis = Files.newInputStream(path)) {
-                            // Escreve o arquivo no arquivo físico
-                            zipOutToFile.putNextEntry(zipEntry);
-                            fis.transferTo(zipOutToFile);  // Copia os bytes para o arquivo físico
-                            zipOutToFile.closeEntry();
+                        try{
+                            zos.putNextEntry(new ZipEntry(path.toString()));
+                            Files.copy(path, zos);
+                            zos.closeEntry();
 
-                            // Escreve o arquivo na memória
-                            zipOutToMemory.putNextEntry(zipEntry);
-                            fis.transferTo(zipOutToMemory);  // Copia os bytes para a memória
-                            zipOutToMemory.closeEntry();
                         } catch (IOException e) {
                             throw new RuntimeException("Erro ao compactar arquivo: " + path, e);
                         }
                     });
         }
 
-        // Converte os bytes do arquivo ZIP em um MultipartFile
-        byte[] zipBytes = byteArrayOutputStream.toByteArray();
-        String contentType = "application/zip";
-
-        // Cria um MultipartFile com a implementação customizada
-        MultipartFile multipartFile = new ByteArrayMultipartFile(file.getName(), zipFilename, contentType, zipBytes);
-        return multipartFile;
+        return zipFilePath.toAbsolutePath().toString();
     }
 }
