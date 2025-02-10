@@ -68,17 +68,23 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             //chaveArquivo
             String chaveArquivo = jsonNode.get("key").asText();
 
+            String[] parts = chaveArquivo.split("/", 2);
+            String email = parts[0];
+            String nomeArquivo = parts[1];
+
             S3Message s3Message = new S3Message();
             s3Message.setBucket(bucketOrigem);
-            s3Message.setKey(chaveArquivo);
+            s3Message.setKey(nomeArquivo);
+            s3Message.setEmail(email);
 
             //baixa arquivo
-            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, chaveArquivo);
+            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, nomeArquivo);
 
             //Status atual do video
             Video videoRecebido = new Video();
             videoRecebido.setId(UUID.randomUUID().toString());
             videoRecebido.setNome(arquivoBaixado.getName().replaceAll("^\\$[^\\$]*\\$", ""));
+            videoRecebido.setEmail(email);
             videoRecebido.setStatus(StatusProcessamento.PENDENTE.toString());
             videoRecebido.setDataCriacao(Instant.now().toString());
             videoRecebido.setDataAtualizacao(Instant.now().toString());
