@@ -25,7 +25,7 @@ public class RealizaUploadVideoAdapterS3Impl implements RealizaUploadVideoAdapte
     @Override
     public void execute(String directory, MultipartFile file) throws IOException {
         // Gera o caminho completo para o arquivo no diretório
-        String fileName = directory + "/" + file.getOriginalFilename();
+        String fileName = file.getOriginalFilename();
 
         // Cria um arquivo temporário no sistema de arquivos local
         Path tempFile = Files.createTempFile("upload-", file.getOriginalFilename());

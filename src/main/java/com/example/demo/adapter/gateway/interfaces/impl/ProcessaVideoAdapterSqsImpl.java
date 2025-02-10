@@ -1,12 +1,13 @@
 package com.example.demo.adapter.gateway.interfaces.impl;
 
-import com.example.demo.adapter.gateway.interfaces.ConverteVideoZipAdapter;
 import com.example.demo.adapter.gateway.interfaces.ConverteVideoFrameAdapter;
+import com.example.demo.adapter.gateway.interfaces.ConverteVideoZipAdapter;
 import com.example.demo.adapter.gateway.interfaces.GerenciaStatusVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.ProcessaVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.RealizaDownloadVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.RealizaUploadVideoAdapter;
 import com.example.demo.adapter.presenter.S3Message;
+import com.example.demo.config.Commons;
 import com.example.demo.core.domain.StatusProcessamento;
 import com.example.demo.core.domain.Video;
 import com.example.demo.core.usecase.ConverteFileEmMultipartFile;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -76,7 +78,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             //Status atual do video
             Video videoRecebido = new Video();
             videoRecebido.setId(UUID.randomUUID().toString());
-            videoRecebido.setNome(arquivoBaixado.getName());
+            videoRecebido.setNome(arquivoBaixado.getName().replaceAll("^\\$[^\\$]*\\$", ""));
             videoRecebido.setStatus(StatusProcessamento.PENDENTE.toString());
             videoRecebido.setDataCriacao(Instant.now().toString());
             videoRecebido.setDataAtualizacao(Instant.now().toString());
@@ -96,6 +98,11 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             //Finaliza processamento e altera para Status concluído
             gerenciaStatusVideoAdapter.alteraStatus(videoRecebido.getId(), StatusProcessamento.CONCLUIDO);
 
+            //Limpa repositórios após manipulação de arquivos
+            Path pathZipsOut = Path.of("./zips_output");
+            Path pathFramesOut = Path.of("./frames_output");
+            Commons.limpaDiretorio(pathZipsOut);
+            Commons.limpaDiretorio(pathFramesOut);
             logger.info("m=execute, status=success, msg=Video processado com sucesso={}", mensagem);
         } catch (Exception e) {
             logger.error("m=execute, status=error, msg=Mensagem de processamento de vídeo falhou mensagem={} exception={}", mensagem, e.getMessage());;

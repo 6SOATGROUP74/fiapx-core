@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-pagamento-svc-lb
+  name: app-fiapx-core-svc-lb
 spec:
   type: LoadBalancer
   ports:
@@ -9,4 +9,4 @@ spec:
       targetPort: 8091
       nodePort: 30012
   selector:
-    app: app-pagamento-pod
+    app: app-fiapx-core-pod

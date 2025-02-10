@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: app-pagamento-opaque
+  name: app-fiapx-core-opaque
 type: Opaque
 stringData:
   DB_USER: tech_user
