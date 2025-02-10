@@ -78,7 +78,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             //Status atual do video
             Video videoRecebido = new Video();
             videoRecebido.setId(UUID.randomUUID().toString());
-            videoRecebido.setNome(arquivoBaixado.getName());
+            videoRecebido.setNome(arquivoBaixado.getName().replaceAll("^\\$[^\\$]*\\$", ""));
             videoRecebido.setStatus(StatusProcessamento.PENDENTE.toString());
             videoRecebido.setDataCriacao(Instant.now().toString());
             videoRecebido.setDataAtualizacao(Instant.now().toString());
@@ -100,9 +100,9 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
             //Limpa repositórios após manipulação de arquivos
             Path pathZipsOut = Path.of("./zips_output");
-            Path framesOut = Path.of("./frames_output");
+            Path pathFramesOut = Path.of("./frames_output");
             Commons.limpaDiretorio(pathZipsOut);
-            Commons.limpaDiretorio(framesOut);
+            Commons.limpaDiretorio(pathFramesOut);
             logger.info("m=execute, status=success, msg=Video processado com sucesso={}", mensagem);
         } catch (Exception e) {
             logger.error("m=execute, status=error, msg=Mensagem de processamento de vídeo falhou mensagem={} exception={}", mensagem, e.getMessage());;

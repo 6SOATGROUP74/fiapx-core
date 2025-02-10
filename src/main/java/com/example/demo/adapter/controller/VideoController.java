@@ -1,15 +1,18 @@
 package com.example.demo.adapter.controller;
 
 import com.example.demo.adapter.gateway.interfaces.RealizaDownloadVideoAdapter;
+import com.example.demo.adapter.gateway.interfaces.impl.ListarVideosProcessadosAdapterImpl;
 import com.example.demo.adapter.presenter.S3Message;
 import com.example.demo.core.usecase.SqsServiceDefinitivo;
 import com.example.demo.core.usecase.SqsService;
 import com.example.demo.infrastructure.repository.dynamo.VideoRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.SneakyThrows;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/video")
@@ -26,13 +30,14 @@ public class VideoController {
     private final VideoRepository videoRepository;
     private final SqsServiceDefinitivo sqsServiceDefinitivo;
     private final RealizaDownloadVideoAdapter realizaDownloadVideoAdapter;
+    private final ListarVideosProcessadosAdapterImpl listarVideosProcessadosAdapter;
 
-
-    public VideoController(SqsService sqsService, VideoRepository videoRepository, SqsServiceDefinitivo sqsServiceDefinitivo, RealizaDownloadVideoAdapter realizaDownloadVideoAdapter) {
+    public VideoController(SqsService sqsService, VideoRepository videoRepository, SqsServiceDefinitivo sqsServiceDefinitivo, RealizaDownloadVideoAdapter realizaDownloadVideoAdapter, ListarVideosProcessadosAdapterImpl listarVideosProcessadosAdapter) {
         this.sqsService = sqsService;
         this.videoRepository = videoRepository;
         this.sqsServiceDefinitivo = sqsServiceDefinitivo;
         this.realizaDownloadVideoAdapter = realizaDownloadVideoAdapter;
+        this.listarVideosProcessadosAdapter = listarVideosProcessadosAdapter;
     }
 
     @SneakyThrows
@@ -58,5 +63,12 @@ public class VideoController {
         sqsServiceDefinitivo.enviarMensagemParaFilaFluxoPronto(s3Message.getBucket(), s3Message.getKey(), "teste-de-envio");
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/listar-videos-processados")
+    @Operation(summary = "Listar arquivos no bucket", description = "Retorna uma lista com os nomes dos arquivos disponíveis no S3")
+    public ResponseEntity<List<String>> listarArquivos() {
+        List<String> arquivos = listarVideosProcessadosAdapter.listarArquivos();
+        return ResponseEntity.ok(arquivos);
     }
 }
