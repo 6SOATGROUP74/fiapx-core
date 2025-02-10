@@ -26,6 +26,8 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.UUID;
 
+import static io.awspring.cloud.sqs.annotation.SqsListenerAcknowledgementMode.ON_SUCCESS;
+
 @Component
 public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
@@ -54,7 +56,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
     @SneakyThrows
     @Override
-    @SqsListener("upload-file-fiapx")
+    @SqsListener(value = "upload-file-fiapx", acknowledgementMode = ON_SUCCESS )
     public void execute(String mensagem) {
 
         logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
