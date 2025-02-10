@@ -4,5 +4,5 @@ metadata:
   name: app-fiapx-core-opaque
 type: Opaque
 stringData:
-  DB_USER: tech_user
-  DB_PASSWORD: tech_password
+  SECURITY_USER: admin
+  SECURITY_PASSWORD: "123"

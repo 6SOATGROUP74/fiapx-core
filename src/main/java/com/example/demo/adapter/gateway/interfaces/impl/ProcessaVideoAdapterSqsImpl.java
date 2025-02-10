@@ -26,6 +26,8 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.UUID;
 
+import static io.awspring.cloud.sqs.annotation.SqsListenerAcknowledgementMode.ON_SUCCESS;
+
 @Component
 public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
@@ -54,7 +56,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
     @SneakyThrows
     @Override
-    @SqsListener("upload-file-fiapx")
+    @SqsListener(value = "upload-file-fiapx", acknowledgementMode = ON_SUCCESS )
     public void execute(String mensagem) {
 
         logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
@@ -62,8 +64,6 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
         try {
             // Converter JSON para objeto
             JsonNode jsonNode = objectMapper.readTree(mensagem);
-            //bucketOrigem
-            String bucketOrigem = jsonNode.get("bucket").asText();
 
             //chaveArquivo
             String chaveArquivo = jsonNode.get("key").asText();
@@ -73,12 +73,11 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             String nomeArquivo = parts[1];
 
             S3Message s3Message = new S3Message();
-            s3Message.setBucket(bucketOrigem);
             s3Message.setKey(nomeArquivo);
             s3Message.setEmail(email);
 
             //baixa arquivo
-            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, nomeArquivo);
+            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, chaveArquivo);
 
             //Status atual do video
             Video videoRecebido = new Video();

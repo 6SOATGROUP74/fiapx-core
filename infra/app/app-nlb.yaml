@@ -6,7 +6,7 @@ spec:
   type: LoadBalancer
   ports:
     - port: 80
-      targetPort: 8091
-      nodePort: 30012
+      targetPort: 8080
+      nodePort: 30019
   selector:
     app: app-fiapx-core-pod

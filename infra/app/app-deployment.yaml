@@ -24,33 +24,22 @@ spec:
           envFrom:
             - configMapRef:
                 name: app-fiapx-core-configmap
-          env:
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: app-fiapx-core-opaque
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: app-fiapx-core-opaque
-                  key: DB_PASSWORD
           readinessProbe:
             httpGet:
               path: actuator/health/readiness
-              port: 8091
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: actuator/health/liveness
-              port: 8091
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 60
           startupProbe:
             httpGet:
               path: actuator/health
-              port: 8091
+              port: 8080
             initialDelaySeconds: 30
             failureThreshold: 30
             periodSeconds: 10

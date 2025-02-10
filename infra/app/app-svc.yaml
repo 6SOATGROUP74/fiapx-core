@@ -6,7 +6,7 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: 8091
-      nodePort: 30002
+      targetPort: 8080
+      nodePort: 30012
   selector:
     app: app-fiapx-core-pod
