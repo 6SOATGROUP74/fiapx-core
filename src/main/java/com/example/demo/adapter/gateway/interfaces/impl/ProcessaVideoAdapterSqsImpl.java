@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.UUID;
@@ -66,6 +67,8 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             JsonNode jsonNode = objectMapper.readTree(mensagem);
 
             //chaveArquivo
+            var teste = jsonNode.get("key").asText().getBytes(StandardCharsets.UTF_8);
+            String utf8String = new String(teste, StandardCharsets.UTF_8);
             String chaveArquivo = jsonNode.get("key").asText();
 
             String[] parts = chaveArquivo.split("/", 2);
@@ -77,7 +80,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             s3Message.setEmail(email);
 
             //baixa arquivo
-            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, chaveArquivo);
+            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, utf8String);
 
             //Status atual do video
             Video videoRecebido = new Video();
