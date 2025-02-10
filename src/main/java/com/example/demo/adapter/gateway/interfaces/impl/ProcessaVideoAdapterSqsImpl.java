@@ -56,7 +56,7 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
     @SneakyThrows
     @Override
-    @SqsListener(value = "upload-file-fiapx", acknowledgementMode = ON_SUCCESS )
+    @SqsListener(value = "upload-file-fiapx.fifo", acknowledgementMode = ON_SUCCESS )
     public void execute(String mensagem) {
 
         logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
