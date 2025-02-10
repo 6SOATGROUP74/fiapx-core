@@ -44,8 +44,8 @@ public class ConverteVideoAdapterParaFramesImpl implements ConverteVideoFrameAda
 
             BufferedImage bufferedImage = converter.convert(frame);
             if (bufferedImage != null) {
-                File output = new File(sourceDirPath + "/frame_" + frameNumber + ".png");
-                ImageIO.write(bufferedImage, "png", output);
+                File output = new File(sourceDirPath + "/frame_" + frameNumber + ".jpeg");
+                ImageIO.write(bufferedImage, "jpeg", output);
                 frameNumber++;
             }
         }

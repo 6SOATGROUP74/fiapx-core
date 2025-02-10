@@ -1,7 +1,7 @@
 package com.example.demo.core.domain;
 
 public enum StatusProcessamento {
-
-    PENDENTE,
+    INCLUIDO,
+    EM_PROCESSO,
     CONCLUIDO
 }

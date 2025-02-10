@@ -25,7 +25,7 @@ public class RealizaDownloadVideoAdapterS3Impl implements RealizaDownloadVideoAd
 
     @SneakyThrows
     @Override
-    public File execute(String bucket, String key) {
+    public synchronized File execute(String bucket, String key) {
         logger.info("m=execute, status=init, msg=Baixando vídeo do bucket S3={}, nomeDoArquivo={}", bucket, key);
 
         File tempFile = Files.createTempFile("$", "$" + key.replace("/", "_")).toFile();

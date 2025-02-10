@@ -33,6 +33,7 @@ public class SqsConfig {
         );
     }
 
+
     @Bean
     public SqsAsyncClient sqsAsyncClient(AwsCredentialsProvider awsCredentialsProvider) {
         return SqsAsyncClient.builder()

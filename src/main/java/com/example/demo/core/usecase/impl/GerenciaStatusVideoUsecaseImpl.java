@@ -3,9 +3,11 @@ package com.example.demo.core.usecase.impl;
 import com.example.demo.adapter.gateway.interfaces.GerenciaStatusVideoAdapter;
 import com.example.demo.core.domain.StatusProcessamento;
 import com.example.demo.core.domain.Video;
+import com.example.demo.core.domain.VideoDto;
 import com.example.demo.core.usecase.interfaces.GerenciaStatusVideoUsecase;
 
 import java.time.Instant;
+import java.util.List;
 
 public class GerenciaStatusVideoUsecaseImpl implements GerenciaStatusVideoUsecase {
 
@@ -37,5 +39,10 @@ public class GerenciaStatusVideoUsecaseImpl implements GerenciaStatusVideoUsecas
     @Override
     public void deletaVideo(String id) {
         gerenciaStatusVideoAdapter.deletaVideo(id);
+    }
+
+    @Override
+    public List<VideoDto> listarVideo(String email){
+        return gerenciaStatusVideoAdapter.listarVideo(email);
     }
 }

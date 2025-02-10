@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -57,19 +58,16 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
 
     @SneakyThrows
     @Override
-    @SqsListener(value = "upload-file-fiapx.fifo", acknowledgementMode = ON_SUCCESS )
+    @SqsListener(value = "upload-file-fiapx.fifo", acknowledgementMode = ON_SUCCESS, messageVisibilitySeconds = "300")
     public void execute(String mensagem) {
 
         logger.info("m=execute, status=init, msg=Mensagem de processamento de vídeo recebida={}", mensagem);
 
         try {
-            // Converter JSON para objeto
             JsonNode jsonNode = objectMapper.readTree(mensagem);
 
-            //chaveArquivo
-            var teste = jsonNode.get("key").asText().getBytes(StandardCharsets.UTF_8);
-            String utf8String = new String(teste, StandardCharsets.UTF_8);
-            String chaveArquivo = jsonNode.get("key").asText();
+            String chaveArquivo = URLDecoder.decode(jsonNode.get("key").asText(), StandardCharsets.UTF_8);
+
 
             String[] parts = chaveArquivo.split("/", 2);
             String email = parts[0];
@@ -79,41 +77,45 @@ public class ProcessaVideoAdapterSqsImpl implements ProcessaVideoAdapter {
             s3Message.setKey(nomeArquivo);
             s3Message.setEmail(email);
 
+            logger.info("m=execute, status=process, msg=Download arquivo bucket ={}", nomeArquivo);
+
             //baixa arquivo
-            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, utf8String);
+            File arquivoBaixado = realizaDownloadVideoAdapter.execute(bucketDeDownload, chaveArquivo);
+
+            logger.info("m=execute, status=process, msg=Download concluido com sucesso ={}", nomeArquivo);
 
             //Status atual do video
-            Video videoRecebido = new Video();
-            videoRecebido.setId(UUID.randomUUID().toString());
-            videoRecebido.setNome(arquivoBaixado.getName().replaceAll("^\\$[^\\$]*\\$", ""));
-            videoRecebido.setEmail(email);
-            videoRecebido.setStatus(StatusProcessamento.PENDENTE.toString());
-            videoRecebido.setDataCriacao(Instant.now().toString());
-            videoRecebido.setDataAtualizacao(Instant.now().toString());
+            final var videoDomain = VideoDomainFactory.criarVideo(arquivoBaixado, email);
 
-            gerenciaStatusVideoAdapter.salvaVideo(videoRecebido);
+            gerenciaStatusVideoAdapter.salvaVideo(videoDomain);
+
+            logger.info("m=execute, status=process, msg=Video recebido com sucesso !={}", nomeArquivo);
 
             MultipartFile arquivoEmMultipartFile = new ConverteFileEmMultipartFile(arquivoBaixado);
 
+            gerenciaStatusVideoAdapter.alteraStatus(videoDomain.getId(), StatusProcessamento.EM_PROCESSO);
+
             converteVideoFrameAdapter.execute(arquivoEmMultipartFile);
 
-            //Converter em Zip
-            MultipartFile arquivoZipado = converteVideoZipAdapter.execute(arquivoEmMultipartFile);
+            logger.info("m=execute, status=process, msg=Video convertido em frames !={}", nomeArquivo);
 
-            //Realiza Upload no S3
-            realizaUploadVideoAdapter.execute(outputDirPath, arquivoZipado);
+            String nomeArquivoZipado = converteVideoZipAdapter.execute(nomeArquivo);
 
-            //Finaliza processamento e altera para Status concluído
-            gerenciaStatusVideoAdapter.alteraStatus(videoRecebido.getId(), StatusProcessamento.CONCLUIDO);
+            logger.info("m=execute, status=process, msg=Arquivo zipado !={}", nomeArquivo);
 
-            //Limpa repositórios após manipulação de arquivos
+            realizaUploadVideoAdapter.execute(email, nomeArquivoZipado);
+
+            gerenciaStatusVideoAdapter.alteraStatus(videoDomain.getId(), StatusProcessamento.CONCLUIDO);
+
+            logger.info("m=execute, status=success, msg=Video processado com sucesso={}", mensagem);
+        } catch (Exception e) {
+            logger.error("m=execute, status=error, msg=Mensagem de processamento de vídeo falhou mensagem={} exception={}", mensagem, e.getMessage());
+            throw e;
+        }finally {
             Path pathZipsOut = Path.of("./zips_output");
             Path pathFramesOut = Path.of("./frames_output");
             Commons.limpaDiretorio(pathZipsOut);
             Commons.limpaDiretorio(pathFramesOut);
-            logger.info("m=execute, status=success, msg=Video processado com sucesso={}", mensagem);
-        } catch (Exception e) {
-            logger.error("m=execute, status=error, msg=Mensagem de processamento de vídeo falhou mensagem={} exception={}", mensagem, e.getMessage());;
         }
     }
 }
