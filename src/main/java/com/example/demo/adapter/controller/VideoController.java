@@ -3,8 +3,6 @@ package com.example.demo.adapter.controller;
 import com.example.demo.adapter.gateway.interfaces.RealizaDownloadVideoAdapter;
 import com.example.demo.adapter.gateway.interfaces.impl.ListarVideosProcessadosAdapterImpl;
 import com.example.demo.adapter.presenter.S3Message;
-import com.example.demo.core.usecase.SqsServiceDefinitivo;
-import com.example.demo.core.usecase.SqsService;
 import com.example.demo.infrastructure.repository.dynamo.VideoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.SneakyThrows;
@@ -26,16 +24,10 @@ import java.util.List;
 @RequestMapping("/v1/video")
 public class VideoController {
 
-    private final SqsService sqsService;
-    private final VideoRepository videoRepository;
-    private final SqsServiceDefinitivo sqsServiceDefinitivo;
     private final RealizaDownloadVideoAdapter realizaDownloadVideoAdapter;
     private final ListarVideosProcessadosAdapterImpl listarVideosProcessadosAdapter;
 
-    public VideoController(SqsService sqsService, VideoRepository videoRepository, SqsServiceDefinitivo sqsServiceDefinitivo, RealizaDownloadVideoAdapter realizaDownloadVideoAdapter, ListarVideosProcessadosAdapterImpl listarVideosProcessadosAdapter) {
-        this.sqsService = sqsService;
-        this.videoRepository = videoRepository;
-        this.sqsServiceDefinitivo = sqsServiceDefinitivo;
+    public VideoController(RealizaDownloadVideoAdapter realizaDownloadVideoAdapter, ListarVideosProcessadosAdapterImpl listarVideosProcessadosAdapter) {
         this.realizaDownloadVideoAdapter = realizaDownloadVideoAdapter;
         this.listarVideosProcessadosAdapter = listarVideosProcessadosAdapter;
     }
