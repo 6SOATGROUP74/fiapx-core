@@ -6,6 +6,7 @@ public class Video {
 
     private String id;
     private String nome;
+    private String email;
     private String status;
     private String dataCriacao;
     private String dataAtualizacao;
@@ -26,6 +27,14 @@ public class Video {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getStatus() {

@@ -13,7 +13,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamoDbBean
-@DynamoDBTable(tableName = "Video")
+@DynamoDBTable(tableName = "tb_fiapx_core")
 public class VideoEntity {
 
     @DynamoDBHashKey
@@ -22,6 +22,9 @@ public class VideoEntity {
 
     @DynamoDBAttribute
     private String nome;
+
+    @DynamoDBAttribute
+    private String email;
 
     @DynamoDBAttribute
     private String status;
