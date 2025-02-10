@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
 
     steps:
       - name: Checkout source code
@@ -27,7 +27,7 @@ jobs:
         run: mvn clean install -DskipTests
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
         run: mvn test
 
   sonarcloud:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -68,11 +68,11 @@ jobs:
           -Dsonar.sources=src/main \
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
           -Dsonar.branch.name=${GITHUB_REF#refs/heads/} \
-          -Dsonar.branch.target=main
+          -Dsonar.branch.target=main 
 
   create-pr:
     needs: [build, test, sonarcloud]
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     if: success()
 
     steps:
@@ -92,3 +92,4 @@ jobs:
         base: main
         title: 'PR : Aberto via actions'
         body: 'Bora Brasil !!!.'
+

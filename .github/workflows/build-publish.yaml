@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
 
     steps:
       - name: Checkout source code
@@ -29,7 +29,7 @@ jobs:
         run: mvn clean package
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
         run: mvn test
 
   sonarcloud:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -63,7 +63,7 @@ jobs:
         run: |
           mvn sonar:sonar \
           -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.projectKey=6SOATGROUP74_fiapx-core \
+          -Dsonar.projectKey=6SOATGROUP74_fiapx-core\
           -Dsonar.organization=shogun-lanches \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.qualitygate.wait=true \
@@ -73,7 +73,7 @@ jobs:
 
   publish-docker-hub:
     needs: [test, build, sonarcloud]
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -103,13 +103,17 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: |
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
           push: true
-          tags: 6soatgroup74/fiapx-core:prod
+          tags: 6soatgroup74/fiapx-security:prod
 
   deploy:
     name: Deploy to EKS
     needs: [publish-docker-hub]
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -120,22 +124,20 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Update kube config
-        run: aws eks update-kubeconfig --name shogun-cluster-eks --region us-east-1
+        run: aws eks update-kubeconfig --name fiapx-cluster-eks --region us-east-1
 
       - name: Valida diretorio
         run: ls -la
 
       - name: Deploy to EKS
         run: |
-          kubectl apply -f infra/app/service-rds.yaml
           kubectl apply -f infra/app/app-configmap.yaml
           kubectl apply -f infra/app/app-deployment.yaml
           kubectl apply -f infra/app/app-hpa.yaml
           kubectl apply -f infra/app/app-nlb.yaml
           kubectl apply -f infra/app/app-opaque.yaml
           kubectl apply -f infra/app/app-svc.yaml
-          kubectl apply -f infra/app/service-rds.yaml
           kubectl apply -f infra/service-account.yaml
