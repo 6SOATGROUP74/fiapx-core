@@ -84,18 +84,6 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>10.13.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-mysql</artifactId>
-            <version>10.13.0</version>
-        </dependency>
-
         <!-- Dependência do Log4j 2 para integração com Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -111,12 +99,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>4.1.2</version>
         </dependency>
 
         <dependency>
@@ -192,28 +174,6 @@
             </exclusions>
         </dependency>
 
-        <!-- database -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- cucumber -->
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>7.13.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit-platform-engine</artifactId>
-            <version>7.13.0</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
@@ -228,12 +188,12 @@
         </dependency>
 
 
-            <!-- JavaCV (inclui FFmpeg) -->
-            <dependency>
-                <groupId>org.bytedeco</groupId>
-                <artifactId>javacv-platform</artifactId>
-                <version>1.5.8</version> <!-- Verifique a versão mais recente -->
-            </dependency>
+        <!-- JavaCV (inclui FFmpeg) -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.8</version> <!-- Verifique a versão mais recente -->
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -311,16 +271,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>10.13.0</version>
-                <configuration>
-                    <url>jdbc:mysql://localhost:3306/db_soat</url>
-                    <user>tech_user</user>
-                    <password>tech_password</password>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
