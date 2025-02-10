@@ -1,12 +1,12 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: app-pagamento-hpa
+  name: app-fiapx-core-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: app-pagamento-deployment
+    name: app-fiapx-core-deployment
   minReplicas: 1
   maxReplicas: 1
   metrics:

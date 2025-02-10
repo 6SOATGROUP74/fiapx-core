@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: app-pagamento-pod
+  name: app-fiapx-core-pod
   labels:
-    app: app-pagamento-pod
+    app: app-fiapx-core-pod
 spec:
   containers:
-    - name: app-pagamento-container
+    - name: app-fiapx-core-container
       image: igoryy/fiap-6soat:2
       imagePullPolicy: Always
       ports:
