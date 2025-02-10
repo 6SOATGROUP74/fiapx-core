@@ -6,4 +6,5 @@ import lombok.Data;
 public class S3Message {
     private String bucket;
     private String key;
+    private String email;
 }
