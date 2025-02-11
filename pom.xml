@@ -187,7 +187,7 @@
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
-            <version>1.5.8</version> <!-- Verifique a versão mais recente -->
+            <version>1.5.11</version>
         </dependency>
 
         <dependency>
